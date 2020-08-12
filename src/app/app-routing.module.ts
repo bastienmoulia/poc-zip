@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UploadComponent } from './upload/upload.component';
-import { DownloadComponent } from './download/download.component';
+import { Demo1Component } from './demo1/demo1.component';
+import { Demo2Component } from './demo2/demo2.component';
 
 const routes: Routes = [
-  { path: 'upload', component: UploadComponent },
-  { path: 'download', component: DownloadComponent },
-  { path: '', redirectTo: '/upload', pathMatch: 'full' }
+  { path: 'demo1', component: Demo1Component },
+  { path: 'demo2', component: Demo2Component },
+  { path: '', redirectTo: '/demo1', pathMatch: 'full' }
 ];
 
 @NgModule({

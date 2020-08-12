@@ -1,0 +1,10 @@
+<input
+  type="file"
+  #fileSelect
+  name="largeFile"
+  (change)="onFileSelect($event)"
+/>
+
+<button (click)="resumableUpload()" class="btn btn-primary">
+  Upload
+</button>

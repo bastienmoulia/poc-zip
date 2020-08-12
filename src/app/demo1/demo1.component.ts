@@ -3,11 +3,10 @@ import * as JSZip from 'jszip';
 import saveAs from 'file-saver';
 
 @Component({
-  selector: 'app-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss']
+  templateUrl: './demo1.component.html',
+  styleUrls: ['./demo1.component.scss']
 })
-export class UploadComponent implements OnInit {
+export class Demo1Component implements OnInit {
 
   files: any[] = [];
   zip: JSZip;

@@ -8,7 +8,8 @@
     "build-ci": "ng build --baseHref=/poc-zip/",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "server": "ts-node-dev server.ts --respawn --transpileOnly"
   },
   "private": true,
   "dependencies": {
@@ -22,10 +23,14 @@
     "@angular/platform-browser-dynamic": "~10.0.6",
     "@angular/router": "~10.0.6",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
+    "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "file-saver": "^2.0.2",
     "jszip": "^3.5.0",
     "rxjs": "~6.5.5",
+    "ts-node-dev": "^1.0.0-pre.56",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
   },
