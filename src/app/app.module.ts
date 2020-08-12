@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UploadComponent } from './upload/upload.component';
 import { DownloadComponent } from './download/download.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { DownloadComponent } from './download/download.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     NgbModule
   ],
   providers: [],
