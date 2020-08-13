@@ -9,20 +9,16 @@ import { Demo2Component } from './demo2/demo2.component';
 import { Demo1Component } from './demo1/demo1.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    Demo1Component,
-    Demo2Component
-  ],
+  declarations: [AppComponent, Demo1Component, Demo2Component],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

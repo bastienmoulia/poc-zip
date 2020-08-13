@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { HttpClient, HttpHeaders, HttpRequest, HttpEventType } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpRequest,
+  HttpEventType,
+} from '@angular/common/http';
 
 @Component({
   templateUrl: './demo2.component.html',
-  styleUrls: ['./demo2.component.scss']
+  styleUrls: ['./demo2.component.scss'],
 })
 export class Demo2Component implements OnInit {
   title = 'resumable-upload-file';
@@ -36,7 +41,7 @@ export class Demo2Component implements OnInit {
     const headers = new HttpHeaders({
       size: this.selectedFile.size.toString(),
       'x-file-id': fileId,
-      name: this.name
+      name: this.name,
     });
 
     // To know whether file exist or not before making upload
@@ -53,7 +58,7 @@ export class Demo2Component implements OnInit {
           size: this.selectedFile.size.toString(),
           'x-file-id': fileId,
           'x-start-byte': uploadedBytes.toString(),
-          name: this.name
+          name: this.name,
         });
         // Useful for showing animation of Mat Spinner
         const req = new HttpRequest(
@@ -62,7 +67,7 @@ export class Demo2Component implements OnInit {
           this.selectedFile.slice(uploadedBytes, this.selectedFile.size + 1),
           {
             headers: headers2,
-            reportProgress: true // continously fetch data from server of how much file is uploaded
+            reportProgress: true, // continously fetch data from server of how much file is uploaded
           }
         );
         this.http.request(req).subscribe(
@@ -82,7 +87,7 @@ export class Demo2Component implements OnInit {
               }
             }
           },
-          err => {}
+          (err) => {}
         );
       });
   }

@@ -4,16 +4,14 @@ import saveAs from 'file-saver';
 
 @Component({
   templateUrl: './demo1.component.html',
-  styleUrls: ['./demo1.component.scss']
+  styleUrls: ['./demo1.component.scss'],
 })
 export class Demo1Component implements OnInit {
-
   files: any[] = [];
   zip: JSZip;
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   onFileChange(event: Event): void {
     const files = (event.target as HTMLInputElement).files;
@@ -25,15 +23,17 @@ export class Demo1Component implements OnInit {
       console.log(zip);
       this.zip = zip;
       this.files = Object.values(zip.files);
-      this.files.forEach(f => f.selected = true);
+      this.files.forEach((f) => (f.selected = true));
     });
   }
 
   simulateUpload(): void {
-    this.files.filter(f => !f.selected).forEach(f => {
-      this.zip.remove(f.name);
-    });
-    this.zip.generateAsync({type: 'blob'}).then((blob) => {
+    this.files
+      .filter((f) => !f.selected)
+      .forEach((f) => {
+        this.zip.remove(f.name);
+      });
+    this.zip.generateAsync({ type: 'blob' }).then((blob) => {
       saveAs(blob, 'generated.zip');
     });
   }

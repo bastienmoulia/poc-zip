@@ -6,11 +6,11 @@ import { Demo2Component } from './demo2/demo2.component';
 const routes: Routes = [
   { path: 'demo1', component: Demo1Component },
   { path: 'demo2', component: Demo2Component },
-  { path: '', redirectTo: '/demo1', pathMatch: 'full' }
+  { path: '', redirectTo: '/demo1', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
