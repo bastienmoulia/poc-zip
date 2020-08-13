@@ -2,12 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import * as JSZip from 'jszip';
 import saveAs from 'file-saver';
 
+interface ZipFile extends JSZip.JSZipObject {
+  selected?: boolean;
+}
+
 @Component({
   templateUrl: './demo1.component.html',
   styleUrls: ['./demo1.component.scss'],
 })
 export class Demo1Component implements OnInit {
-  files: any[] = [];
+  files: ZipFile[] = [];
   zip: JSZip;
   constructor() {}
 
