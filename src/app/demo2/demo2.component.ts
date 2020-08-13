@@ -1,27 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import {
   HttpClient,
   HttpHeaders,
   HttpRequest,
   HttpEventType,
 } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './demo2.component.html',
   styleUrls: ['./demo2.component.scss'],
 })
 export class Demo2Component implements OnInit {
-  title = 'resumable-upload-file';
+  selectedFile: File;
+  name: string;
+  uploadPercent: number;
+  request: Subscription;
+  loading = false;
 
-  selectedFile; // Resumable File Upload Variable
-  name; // Resumable File Upload Variable
-  uploadPercent; // Resumable File Upload Variable
-  color = 'primary'; // Mat Spinner Variable (Resumable)
-  mode = 'determinate'; // Mat Spinner Variable (Resumable)
-  value = 50.25890809809; // Mat Spinner Variable (Resumable)
-
-  constructor(private http: HttpClient, private form: FormBuilder) {}
+  constructor(private http: HttpClient) {}
   ngOnInit() {}
 
   /* Code For Resumable File Upload Start*/
@@ -43,14 +41,15 @@ export class Demo2Component implements OnInit {
       'x-file-id': fileId,
       name: this.name,
     });
+    this.loading = true;
 
     // To know whether file exist or not before making upload
-    this.http
-      .get('http://localhost:3000/status', { headers })
-      .subscribe((res: any) => {
+    this.http.get(`${environment.api}/status`, { headers }).subscribe(
+      (res: any) => {
         console.log(JSON.stringify(res));
         if (res.status === 'file is present') {
-          alert('File already exists. Please choose a different file.');
+          this.loading = false;
+          alert('File is processing...');
           return;
         }
         const uploadedBytes = res.uploaded; // GET response how much file is uploaded
@@ -63,32 +62,53 @@ export class Demo2Component implements OnInit {
         // Useful for showing animation of Mat Spinner
         const req = new HttpRequest(
           'POST',
-          'http://localhost:3000/upload',
+          `${environment.api}/upload`,
           this.selectedFile.slice(uploadedBytes, this.selectedFile.size + 1),
           {
             headers: headers2,
             reportProgress: true, // continously fetch data from server of how much file is uploaded
           }
         );
-        this.http.request(req).subscribe(
-          (res: any) => {
-            if (res.type === HttpEventType.UploadProgress) {
-              this.uploadPercent = Math.round((100 * res.loaded) / res.total);
+        this.request = this.http.request(req).subscribe(
+          (res2: any) => {
+            if (
+              res2.type === HttpEventType.UploadProgress &&
+              this.selectedFile
+            ) {
+              this.uploadPercent = Math.round(
+                (100 * (res2.loaded + uploadedBytes)) / this.selectedFile.size +
+                  1
+              );
               console.log(this.uploadPercent);
               if (this.uploadPercent >= 100) {
                 this.name = '';
                 this.selectedFile = null;
+                this.loading = false;
               }
             } else {
-              console.log(JSON.stringify(res));
+              console.log(JSON.stringify(res2));
               if (this.uploadPercent >= 100) {
                 this.name = '';
                 this.selectedFile = null;
+                this.loading = false;
               }
             }
           },
-          (err) => {}
+          (err) => {
+            this.loading = false;
+          }
         );
-      });
+      },
+      () => {
+        this.loading = false;
+      }
+    );
+  }
+
+  stop(): void {
+    if (this.request) {
+      this.loading = false;
+      this.request.unsubscribe();
+    }
   }
 }

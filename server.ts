@@ -13,6 +13,8 @@ const server = app.listen(3000, () => {
 
 let uploads = {};
 
+const folder = 'temp';
+
 app.post('/upload', (req, res, next) => {
   const fileId = req.headers['x-file-id'];
   const startByte = parseInt(req.headers['x-start-byte'], 10);
@@ -43,7 +45,7 @@ app.post('/upload', (req, res, next) => {
   if (!startByte) {
     upload.bytesReceived = 0;
     const name = req.headers.name;
-    fileStream = fs.createWriteStream(`./assets/${name}`, {
+    fileStream = fs.createWriteStream(`./${folder}/${name}`, {
       flags: 'w', // with "w"(write stream ) it keeps on adding data
     });
   } else {
@@ -54,7 +56,7 @@ app.post('/upload', (req, res, next) => {
       return;
     }
     // append to existing file
-    fileStream = fs.createWriteStream(`./assets/${name}`, {
+    fileStream = fs.createWriteStream(`./${folder}/${name}`, {
       flags: 'a',
     });
   }
@@ -75,6 +77,8 @@ app.post('/upload', (req, res, next) => {
       // can do something else with the uploaded file here
       res.send({ status: 'uploaded' });
       res.end();
+
+      processFile(name);
     } else {
       // connection lost, leave the unfinished file around
       console.log('File unfinished, stopped at ' + upload.bytesReceived);
@@ -110,7 +114,7 @@ app.get('/status', (req, res) => {
   console.log(name);
   if (name) {
     try {
-      const stats = fs.statSync('assets/' + name); // grabs file information and returns
+      const stats = fs.statSync(`${folder}/${name}`); // grabs file information and returns
       // checking file exists or not
       if (stats.isFile()) {
         console.log(
@@ -137,3 +141,12 @@ app.get('/status', (req, res) => {
     res.send({ uploaded: 0 });
   }
 });
+
+function processFile(name: string): void {
+  // TODO: process the file and delete it from temp
+  setTimeout(() => {
+    fs.unlink(`./${folder}/${name}`, () => {
+      console.log(`File ${name} deleted`);
+    });
+  }, 10000);
+}

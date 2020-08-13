@@ -13,14 +13,15 @@ const IGNORED_FILES = ['.DS_Store'];
 })
 export class Demo1Component implements OnInit {
   files: ZipFile[] = [];
+  file: File;
   zip: JSZip;
   constructor() {}
 
   ngOnInit(): void {}
 
   onFileChange(event: Event): void {
-    const files = (event.target as HTMLInputElement).files;
-    this.openZip(files[0]);
+    this.file = (event.target as HTMLInputElement).files[0];
+    this.openZip(this.file);
   }
 
   openZip(file: File): void {

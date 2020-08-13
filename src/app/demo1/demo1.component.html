@@ -1,3 +1,6 @@
+<h2 class="text-primary">
+  Open a zip file / Select the files to keep / Download a new zip file
+</h2>
 <div class="form-group">
   <div class="custom-file">
     <input
@@ -8,7 +11,9 @@
       accept=".zip"
       (change)="onFileChange($event)"
     />
-    <label class="custom-file-label" for="zip">Choose ZIP file</label>
+    <label class="custom-file-label" for="zip">{{
+      file ? file.name : 'Choose ZIP file'
+    }}</label>
   </div>
 </div>
 
