@@ -13,7 +13,7 @@ const server = app.listen(3000, () => {
 
 let uploads = {};
 
-const folder = 'temp';
+const folder = 'server/temp';
 
 app.post('/upload', (req, res, next) => {
   const fileId = req.headers['x-file-id'];
@@ -40,6 +40,10 @@ app.post('/upload', (req, res, next) => {
   const upload = uploads[fileId]; // Bytes of file already present
 
   let fileStream;
+  // create folder if not exist
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+  }
 
   // checking bytes of file uploaded and sending to server
   if (!startByte) {

@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "server": "ts-node-dev server.ts --respawn --transpileOnly"
+    "server-demo2": "ts-node-dev server/server-demo2.ts --respawn --transpileOnly",
+    "server-demo3": "ts-node-dev server/server-demo3.ts --respawn --transpileOnly"
   },
   "private": true,
   "dependencies": {
