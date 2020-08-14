@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
+const fse = require('fs-extra');
+const rimraf = require('rimraf');
+const JSZip = require('jszip');
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -16,6 +19,14 @@ let uploads = {};
 
 const tempFolder = 'server/temp';
 const dbFolder = 'server/db';
+
+// create folders if not exist
+if (!fs.existsSync(tempFolder)) {
+  fs.mkdirSync(tempFolder);
+}
+if (!fs.existsSync(dbFolder)) {
+  fs.mkdirSync(dbFolder);
+}
 
 app.post('/upload', (req, res, next) => {
   const fileId = req.headers['x-file-id'];
@@ -112,7 +123,7 @@ app.get('/status', (req, res) => {
   const fileId = req.headers['x-file-id'];
   const name = req.headers.name;
   const fileSize = parseInt(req.headers.size, 10);
-  console.log(name);
+  console.log('status', name);
   if (name) {
     try {
       const stats = fs.statSync(`${tempFolder}/${name}`); // grabs file information and returns
@@ -149,7 +160,13 @@ app.get('/files', (req, res) => {
 });
 
 app.delete('/files', (req, res) => {
-  fs.rmdirSync(dbFolder, { recursive: true });
+  rimraf.sync(dbFolder);
+  fs.mkdirSync(dbFolder);
+  res.send({});
+});
+
+app.delete('/file', (req, res) => {
+  fs.unlinkSync(`${dbFolder}/${req.query.name}`);
   res.send({});
 });
 
@@ -162,7 +179,7 @@ app.post('/diff-files', (req, res) => {
       filesToUpload.push(file);
     }
   });
-  res.send([filesToUpload]);
+  res.send(filesToUpload);
 });
 
 function getFiles(folder: string = dbFolder): string[] {
@@ -184,9 +201,26 @@ function getFiles(folder: string = dbFolder): string[] {
 
 function processFile(name: string): void {
   // TODO: process the file and delete it from temp
-  setTimeout(() => {
-    fs.unlink(`./${tempFolder}/${name}`, () => {
-      console.log(`File ${name} deleted`);
+  fs.readFile(`./${tempFolder}/${name}`, (err, data) => {
+    if (err) {
+      throw err;
+    }
+    const jsZip = new JSZip();
+    jsZip.loadAsync(data).then((zip) => {
+      const files: any[] = Object.values(zip.files).filter((f: any) => !f.dir);
+      files.forEach((file) => {
+        jsZip
+          .file(file.name)
+          .async('nodebuffer')
+          .then((content) => {
+            fse.outputFileSync(`${dbFolder}/${file.name}`, content);
+          });
+      });
+      setTimeout(() => {
+        fs.unlink(`./${tempFolder}/${name}`, () => {
+          console.log(`File ${name} deleted`);
+        });
+      }, 10000);
     });
-  }, 10000);
+  });
 }
