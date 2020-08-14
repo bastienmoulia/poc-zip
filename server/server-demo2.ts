@@ -48,7 +48,6 @@ app.post('/upload', (req, res, next) => {
   // checking bytes of file uploaded and sending to server
   if (!startByte) {
     upload.bytesReceived = 0;
-    const name = req.headers.name;
     fileStream = fs.createWriteStream(`./${folder}/${name}`, {
       flags: 'w', // with "w"(write stream ) it keeps on adding data
     });

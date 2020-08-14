@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const app = express();
 app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const server = app.listen(3000, () => {
@@ -13,7 +14,8 @@ const server = app.listen(3000, () => {
 
 let uploads = {};
 
-const folder = 'server/temp';
+const tempFolder = 'server/temp';
+const dbFolder = 'server/db';
 
 app.post('/upload', (req, res, next) => {
   const fileId = req.headers['x-file-id'];
@@ -44,8 +46,7 @@ app.post('/upload', (req, res, next) => {
   // checking bytes of file uploaded and sending to server
   if (!startByte) {
     upload.bytesReceived = 0;
-    const name = req.headers.name;
-    fileStream = fs.createWriteStream(`./${folder}/${name}`, {
+    fileStream = fs.createWriteStream(`./${tempFolder}/${name}`, {
       flags: 'w', // with "w"(write stream ) it keeps on adding data
     });
   } else {
@@ -56,7 +57,7 @@ app.post('/upload', (req, res, next) => {
       return;
     }
     // append to existing file
-    fileStream = fs.createWriteStream(`./${folder}/${name}`, {
+    fileStream = fs.createWriteStream(`./${tempFolder}/${name}`, {
       flags: 'a',
     });
   }
@@ -114,7 +115,7 @@ app.get('/status', (req, res) => {
   console.log(name);
   if (name) {
     try {
-      const stats = fs.statSync(`${folder}/${name}`); // grabs file information and returns
+      const stats = fs.statSync(`${tempFolder}/${name}`); // grabs file information and returns
       // checking file exists or not
       if (stats.isFile()) {
         console.log(
@@ -142,10 +143,49 @@ app.get('/status', (req, res) => {
   }
 });
 
+app.get('/files', (req, res) => {
+  const files = getFiles();
+  res.send(files);
+});
+
+app.delete('/files', (req, res) => {
+  fs.rmdirSync(dbFolder, { recursive: true });
+  res.send({});
+});
+
+app.post('/diff-files', (req, res) => {
+  const filesToUpload = [];
+  const files = req.body;
+  const existingFiles = getFiles();
+  files.forEach((file) => {
+    if (existingFiles.indexOf(file) === -1) {
+      filesToUpload.push(file);
+    }
+  });
+  res.send([filesToUpload]);
+});
+
+function getFiles(folder: string = dbFolder): string[] {
+  const files = [];
+  const names = fs.readdirSync(folder);
+  names.forEach((name) => {
+    const stat = fs.statSync(`${folder}/${name}`);
+    if (stat.isDirectory()) {
+      const childrens = getFiles(`${folder}/${name}`);
+      childrens.forEach((children) => {
+        files.push(`${name}/${children}`);
+      });
+    } else {
+      files.push(name);
+    }
+  });
+  return files;
+}
+
 function processFile(name: string): void {
   // TODO: process the file and delete it from temp
   setTimeout(() => {
-    fs.unlink(`./${folder}/${name}`, () => {
+    fs.unlink(`./${tempFolder}/${name}`, () => {
       console.log(`File ${name} deleted`);
     });
   }, 10000);

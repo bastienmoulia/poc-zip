@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "~10.0.6",
     "@angular/router": "~10.0.6",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
+    "blob-to-hash": "0.0.1",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "cors": "^2.8.5",
