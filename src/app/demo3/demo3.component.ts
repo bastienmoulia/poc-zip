@@ -13,7 +13,6 @@ import { ToastrService } from 'ngx-toastr';
 const IGNORED_FILES = ['.DS_Store'];
 
 @Component({
-  selector: 'app-demo3',
   templateUrl: './demo3.component.html',
   styleUrls: ['./demo3.component.scss'],
 })
