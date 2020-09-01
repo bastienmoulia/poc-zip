@@ -88,4 +88,32 @@ export class Demo1Component implements OnInit {
       });
     });
   }
+
+  simulateUpload2(): void {
+    const selectedEntries = this.entries
+      .filter((entry) => entry.selected)
+      .map((entry) => entry.filename);
+    console.log('selectedEntries', selectedEntries);
+
+    const zipFs = new (window as any).zip.fs.FS();
+    zipFs.importBlob(this.file, () => {
+      console.log(zipFs);
+      const entriesFiltered = zipFs.entries.filter(
+        (entry) => selectedEntries.indexOf(entry.data?.filename) > -1
+      );
+      this.save(entriesFiltered);
+    });
+  }
+
+  private save(entries: any[]): void {
+    const entry = entries.shift();
+    console.log(entry);
+    entry.getBlob((window as any).zip.getMimeType(entry.name), (data) => {
+      console.log(data);
+      saveAs(data, entry.name);
+      if (entries.length > 0) {
+        this.save(entries);
+      }
+    });
+  }
 }
